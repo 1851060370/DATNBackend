@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const connect = require('./database/connect')
 
 const app = express()
-const POST = 6666
+const POST = 6789
 
 // routers
 const authRouter = require('./routers/auth.route')
