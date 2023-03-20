@@ -8,7 +8,7 @@ const CategoryModel = mongoose.Schema(
             minLength: 5
         },
         parent_id: {
-            type: Number,
+            type: mongoose.Types.ObjectId,
             default: null
         },
         icon_url: {

@@ -5,9 +5,14 @@ const blogCategoryService = require('../services/blogCategory.service')
 const catchAsync = require('../utils/catchAsync')
 
 const getCategories = catchAsync(async (req, res) => {
-    const {page_index, page_size, sort,...restQuery} = req.query
-    const categories = await blogCategoryService.getBlogCategories(page_index, page_size, sort,restQuery)
-    res.status(200).send({success: true, data: categories})
+    const {page_index, page_size, sort, ...restQuery} = req.query
+    const {blogCategories, total} = await blogCategoryService.getBlogCategories(
+        page_index,
+        page_size,
+        sort,
+        restQuery
+    )
+    res.status(200).send({success: true, data: blogCategories, page_index, page_size, total})
 })
 
 const getCategory = catchAsync(async (req, res) => {

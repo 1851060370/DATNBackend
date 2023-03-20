@@ -5,9 +5,9 @@ const contactService = require('../services/contact.service')
 const catchAsync = require('../utils/catchAsync')
 
 const getContacts = catchAsync(async (req, res) => {
-    const {page_index, page_size, sort} = req.query
-    const contacts = await contactService.getContacts(page_index, page_size, sort)
-    res.status(200).send({success: true, contacts})
+    const {page_index, page_size, sort,...restQuery} = req.query
+    const {contacts, total} = await contactService.getContacts(page_index, page_size, sort,restQuery)
+    res.status(200).send({success: true, data: contacts, page_index, page_size, total})
 })
 
 const getContactDetail = catchAsync(async (req, res) => {

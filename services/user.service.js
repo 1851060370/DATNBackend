@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 
 const ApiError = require('../utils/ApiError')
 const userModel = require('../models/user')
+const uploadFileCloudinary = require('../utils/uploadFileCloudinary')
 
 const getUserByEmail = async email => {
     const user = await userModel.findOne({email})
@@ -18,16 +19,31 @@ const resetPassword = async (email, oldPassword) => {
     return await user.updateOne({password: newPassword}, {new: true})
 }
 
-const getUsers = async (page, limit, sort) => {
+const getUsers = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
+    const name = restQuery?.name ?? ''
+    const email = restQuery?.email ?? ''
+    delete restQuery?.name
+    delete restQuery?.email
 
     const users = await userModel
-        .find()
+        .find({
+            name: {$regex: name, $options: 'i'},
+            email: {$regex: email, $options: 'i'},
+            ...restQuery
+        })
         .select('-password')
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
-    return users
+
+    const totalUsers = await userModel.countDocuments({
+        name: {$regex: name, $options: 'i'},
+        email: {$regex: email, $options: 'i'},
+        ...restQuery
+    })
+
+    return {users, totalUsers}
 }
 
 const getDetailUser = async id => {
@@ -38,18 +54,23 @@ const getDetailUser = async id => {
     return user
 }
 
-const createUser = async body => {
+const createUser = async (body, file) => {
     const user = await getUserByEmail(body.email)
+    const avatar = await uploadFileCloudinary(file)
     if (user) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Email đã được sử dụng')
     }
     body.password = await bcrypt.hash(body.password, 8)
+    body.avatar = avatar
     return await userModel.create(body)
 }
 
-const updateUserById = async (userId, userBody) => {
+const updateUserById = async (userId, userBody, file) => {
+    if (file && typeof userBody.avatar !== 'string') {
+        const avatar = await uploadFileCloudinary(file)
+        userBody.avatar = avatar
+    }
     const user = await userModel.findById(userId)
-
     if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy người dùng')
     }

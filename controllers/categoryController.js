@@ -5,9 +5,20 @@ const categoryService = require('../services/category.service')
 const catchAsync = require('../utils/catchAsync')
 
 const getCategories = catchAsync(async (req, res) => {
-    const {page_index, page_size, sort} = req.query
-    const categories = await categoryService.getCategories(page_index, page_size, sort)
-    res.status(200).send({success: true, data: categories})
+    const {page_index, page_size, sort, ...restQuery} = req.query
+    const {categories, total} = await categoryService.getCategories(
+        page_index,
+        page_size,
+        sort,
+        restQuery
+    )
+    res.status(200).send({success: true, data: categories, page_index, page_size, total})
+})
+
+const getOptionsCategories = catchAsync(async (req, res) => {
+    const {id} = req.params
+    const categories = await categoryService.getOptionCategories(id)
+    res.status(200).send(categories)
 })
 
 const getCategoryDetail = catchAsync(async (req, res) => {
@@ -47,5 +58,6 @@ module.exports = {
     getCategoryDetail,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getOptionsCategories
 }

@@ -3,15 +3,29 @@ const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const contactModel = require('../models/contact')
 
-const getContacts = async (page, limit, sort) => {
+const getContacts = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
+    const user_name = restQuery?.user_name ?? ''
+    const user_email = restQuery?.user_email ?? ''
+    const user_phone = restQuery?.user_phone ?? ''
 
     const contacts = await contactModel
-        .find()
+        .find({
+            user_name: {$regex: user_name, $options: 'i'},
+            user_email: {$regex: user_email, $options: 'i'},
+            user_phone: {$regex: user_phone, $options: 'i'}
+        })
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
-    return contacts
+
+    const totalContacts = await contactModel.countDocuments({
+        user_name: {$regex: user_name, $options: 'i'},
+        user_email: {$regex: user_email, $options: 'i'},
+        user_phone: {$regex: user_phone, $options: 'i'}
+    })
+
+    return {contacts, total: totalContacts}
 }
 
 const getDetailContact = async id => {

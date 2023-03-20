@@ -3,15 +3,32 @@ const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const showRoomModel = require('../models/showRoom')
 
-const getShowRooms = async (page, limit, sort) => {
+const getShowRooms = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
+    const name = restQuery?.name ?? ''
+    const address = restQuery?.address ?? ''
+    delete restQuery?.name
+    delete restQuery?.address
+
+    console.log(name);
 
     const showRooms = await showRoomModel
-        .find()
+        .find({
+            name: {$regex: name, $options: 'i'},
+            address: {$regex: address, $options: 'i'},
+            ...restQuery
+        })
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
-    return showRooms
+
+    const totalShowRooms = await showRoomModel.countDocuments({
+        name: {$regex: name, $options: 'i'},
+        address: {$regex: address, $options: 'i'},
+        ...restQuery
+    })
+
+    return {showRooms,total:totalShowRooms}
 }
 
 const getDetailShowRoom = async id => {

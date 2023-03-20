@@ -9,11 +9,16 @@ const getBlogCategories = async (page, limit, sort, restQuery) => {
     delete restQuery?.name
 
     const blogCategories = await blogCategoryModel
-        .find({name: {$regex: name, options: 'i'}, ...restQuery})
+        .find({name: {$regex: name, $options: 'i'}, ...restQuery})
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
-    return blogCategories
+
+    const totalCategories = await blogCategoryModel.countDocuments({
+        name: {$regex: name, $options: 'i'},
+        ...restQuery
+    })
+    return {blogCategories, total: totalCategories}
 }
 
 const getDetailBlogCategory = async id => {
