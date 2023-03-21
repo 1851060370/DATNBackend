@@ -32,7 +32,7 @@ const ProductEvaluateModel = Schema(
             enum: [1, 2, 3, 4, 5]
         },
         display: {
-            type: Boolean,
+            type: Number,
             enum: [0, 1],
             default: 0
         }

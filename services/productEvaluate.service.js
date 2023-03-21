@@ -3,15 +3,26 @@ const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const productEvaluateModel = require('../models/product_evaluate')
 
-const getProductEvaluates = async (page, limit, sort) => {
+const getProductEvaluates = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
+    const user_email = restQuery?.user_email ?? ''
+    delete restQuery?.user_email
 
     const productEvaluates = await productEvaluateModel
-        .find()
+        .find({
+            user_email: {$regex: user_email, $options: 'i'},
+            ...restQuery
+        })
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
-    return productEvaluates
+
+    const total = await productEvaluateModel.countDocuments({
+        user_email: {$regex: user_email, $options: 'i'},
+        ...restQuery
+    })
+
+    return {productEvaluates, total}
 }
 
 const getDetailProductEvaluate = async id => {

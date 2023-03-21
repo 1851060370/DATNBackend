@@ -5,19 +5,20 @@ const productEvaluateService = require('../services/productEvaluate.service')
 const catchAsync = require('../utils/catchAsync')
 
 const getProductEvaluates = catchAsync(async (req, res) => {
-    const {page_index, page_size, sort} = req.query
-    const productEvaluates = await productEvaluateService.getProductEvaluates(
+    const {page_index, page_size, sort, ...restQuery} = req.query
+    const {productEvaluates, total} = await productEvaluateService.getProductEvaluates(
         page_index,
         page_size,
-        sort
+        sort,
+        restQuery
     )
-    res.status(200).send({success: true, productEvaluates})
+    res.status(200).send({success: true, data: productEvaluates, page_index, page_size, total})
 })
 
 const getProductEvaluateDetail = catchAsync(async (req, res) => {
     const {id} = req.params
     const productEvaluate = await productEvaluateService.getDetailProductEvaluate(id)
-    res.status(200).send({success: true, productEvaluate})
+    res.status(200).send({success: true, data:productEvaluate})
 })
 
 const createProductEvaluate = catchAsync(async (req, res) => {
