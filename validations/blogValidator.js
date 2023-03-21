@@ -22,11 +22,6 @@ const create = () => {
             .withMessage('Loại bài viết là bắt buộc')
             .isString()
             .withMessage('Loại bài viết không hợp lệ'),
-        body('image')
-            .exists()
-            .withMessage('Ảnh bài viết là bắt buộc')
-            .isString()
-            .withMessage('Ảnh bài viết không hợp lệ'),
         body('author').exists().withMessage('Tác giả bài viết là bắt buộc')
     ]
 }
@@ -53,11 +48,6 @@ const update = () => {
             .withMessage('Loại bài viết là bắt buộc')
             .isString()
             .withMessage('Loại bài viết không hợp lệ'),
-        body('image')
-            .exists()
-            .withMessage('Ảnh bài viết là bắt buộc')
-            .isString()
-            .withMessage('Ảnh bài viết không hợp lệ'),
         body('author').exists().withMessage('Tác giả bài viết là bắt buộc')
     ]
 }
