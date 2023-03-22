@@ -18,6 +18,7 @@ const contactRouter = require('./routers/contact.route')
 const productEvaluateRouter = require('./routers/productEvaluate.route')
 const blogRouter = require('./routers/blog.route')
 const productRouter = require('./routers/product.route')
+const orderRouter = require('./routers/order.route')
 
 // configs
 dotenv.config()
@@ -46,3 +47,4 @@ app.use('/api/contact', contactRouter)
 app.use('/api/product-evaluate', productEvaluateRouter)
 app.use('/api/blog', blogRouter)
 app.use('/api/product', productRouter)
+app.use('/api/order', orderRouter)
