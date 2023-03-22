@@ -44,11 +44,11 @@ const ProductModel = mongoose.Schema(
         },
         isHot: {
             type: Boolean,
-            defaultValue: false
+            default: false
         },
         isPopular: {
             type: Boolean,
-            defaultValue: false
+            default: false
         },
     },
     {timestamps: true}

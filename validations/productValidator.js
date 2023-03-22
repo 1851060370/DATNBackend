@@ -9,11 +9,6 @@ const create = () => {
             .withMessage('Tên sản phẩm không được dưới 5 ký tự')
             .isLength({max: 255})
             .withMessage('Tên sản phẩm không được quá 255 ký tự'),
-        body('images')
-            .exists()
-            .withMessage('Ảnh sản phẩm là bắt buộc')
-            .isArray({min: 1, max: 3})
-            .withMessage('Số lượng ảnh không được ít hơn 1 hoặc lớn hơn 3'),
         body('options')
             .exists()
             .withMessage('Lựa chọn sản phẩm là bắt buộc')
@@ -41,11 +36,6 @@ const update = () => {
             .withMessage('Tên sản phẩm không được dưới 5 ký tự')
             .isLength({max: 255})
             .withMessage('Tên sản phẩm không được quá 255 ký tự'),
-        body('images')
-            .exists()
-            .withMessage('Ảnh sản phẩm là bắt buộc')
-            .isArray({min: 1, max: 3})
-            .withMessage('Số lượng ảnh không được ít hơn 1 hoặc lớn hơn 3'),
         body('options')
             .exists()
             .withMessage('Lựa chọn sản phẩm là bắt buộc')

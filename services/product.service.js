@@ -1,19 +1,25 @@
 const httpStatus = require('http-status')
 
 const ApiError = require('../utils/ApiError')
+const uploadFileCloudinary = require('../utils/uploadFileCloudinary')
 const productModel = require('../models/product')
 
-const getProducts = async (page, limit, sort,restQuery) => {
+const getProducts = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
     const name = restQuery?.name ?? ''
     delete restQuery?.name
 
     const products = await productModel
-        .find({name:{$regex: name,$options:'i'},...restQuery})
+        .find({name: {$regex: name, $options: 'i'}, ...restQuery})
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
-    return products
+
+    const total = await productModel.countDocuments({
+        name: {$regex: name, $options: 'i'},
+        ...restQuery
+    })
+    return {products, total}
 }
 
 const getDetailProduct = async id => {
@@ -24,19 +30,33 @@ const getDetailProduct = async id => {
     return product
 }
 
-const createProduct = async body => {
+const createProduct = async (body, files) => {
     const product = await productModel.findOne({name: body.name})
     if (product) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Tên sản phẩm đã tồn tại')
     }
+    if (files) {
+        const images = await uploadFileCloudinary(files)
+        body.images = images
+    }
+    body.colors = JSON.parse(body.colors)
+    body.options = JSON.parse(body.options)
+    body.parameters = JSON.parse(body.parameters)
     return await productModel.create(body)
 }
 
-const updateProduct = async (id, body) => {
+const updateProduct = async (id, body, files) => {
     const product = await productModel.findById(id)
     if (!product) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy sản phẩm')
     }
+    if (files.length > 0) {
+        const images = await uploadFileCloudinary(files)
+        body.images = images
+    }
+    body.colors = JSON.parse(body.colors)
+    body.options = JSON.parse(body.options)
+    body.parameters = JSON.parse(body.parameters)
     Object.assign(product, body)
     return await product.save()
 }

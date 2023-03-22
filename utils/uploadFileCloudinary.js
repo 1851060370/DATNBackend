@@ -9,14 +9,28 @@ cloudinary.config({
 
 const uploadFileCloudinary = async file => {
     if (file) {
-        await cloudinary.uploader.upload(file.path, {public_id: file.filename})
-        const url = await cloudinary.url(file.filename, {
-            width: 500,
-            height: 500,
-            Crop: 'fill'
-        })
+        if (Array.isArray(file)) {
+            const urls = []
+            for (let i = 0; i < file.length; i++) {
+                await cloudinary.uploader.upload(file[i].path, {public_id: file[i].filename})
+                const url = await cloudinary.url(file[i].filename, {
+                    width: 500,
+                    height: 500,
+                    Crop: 'fill'
+                })
+                urls.push(url)
+            }
+            return urls
+        } else {
+            await cloudinary.uploader.upload(file.path, {public_id: file.filename})
+            const url = await cloudinary.url(file.filename, {
+                width: 500,
+                height: 500,
+                Crop: 'fill'
+            })
 
-        return url
+            return url
+        }
     }
     return
 }
