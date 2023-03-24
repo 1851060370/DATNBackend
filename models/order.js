@@ -36,7 +36,7 @@ const OrderModel = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['chờ xác nhận', 'xác nhận', 'đang giao'],
+            enum: ['chờ xác nhận', 'xác nhận', 'đang giao','đã giao'],
             default:'chờ xác nhận'
         }
     },
