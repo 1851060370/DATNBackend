@@ -58,9 +58,13 @@ const updateProduct = async (id, body, files) => {
         const images = await uploadFileCloudinary(files)
         body.images = images
     }
-    body.colors = JSON.parse(body.colors)
-    body.options = JSON.parse(body.options)
-    body.parameters = JSON.parse(body.parameters)
+    const colors = body.colors.map(color => JSON.parse(color))
+    const options = body.options.map(option => JSON.parse(option))
+    const parameters = body.parameters.map(parameter => JSON.parse(parameter))
+
+    body.colors = colors
+    body.options = options
+    body.parameters = parameters
     Object.assign(product, body)
     return await product.save()
 }
