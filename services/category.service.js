@@ -22,7 +22,7 @@ const getCategories = async (page, limit, sort, restQuery) => {
 }
 
 const getOptionCategories = async id => {
-    if(id === 'new') {
+    if (id === 'new') {
         return await categoryModel.find()
     }
     return await categoryModel.find({_id: {$ne: id}})
@@ -34,6 +34,37 @@ const getDetailCategory = async id => {
         throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy loại')
     }
     return category
+}
+
+const getMenus = async () => {
+    const categories = await categoryModel.find()
+    const result = []
+
+    // Tạo một đối tượng để lưu trữ các nút theo id
+    const nodes = {}
+
+    // Tạo cây
+    categories.forEach(item => {
+        const {_id, parent_id, name,icon_url} = item
+
+        if (!nodes[_id]) {
+            nodes[_id] = {_id, parent_id, name,icon_url, children: []}
+        } else {
+            nodes[_id].parent_id = parent_id
+        }
+
+        const node = nodes[_id]
+
+        if (parent_id === null) {
+            result.push(node)
+        } else {
+            if (!nodes[parent_id]) {
+                nodes[parent_id] = {_id: parent_id, parent_id: null, children: []}
+            }
+            nodes[parent_id].children.push(node)
+        }
+    })
+    return result
 }
 
 const createCategory = async body => {
@@ -67,5 +98,6 @@ module.exports = {
     createCategory,
     updateCategory,
     deleteCategoryById,
-    getOptionCategories
+    getOptionCategories,
+    getMenus
 }

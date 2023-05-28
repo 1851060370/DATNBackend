@@ -38,6 +38,14 @@ const getDetailBlog = async id => {
     return blog
 }
 
+const getPopularBlogs = async () => {
+    const blogs = await blogModel.find({isPopular: 1}).limit(2)
+    if (!blogs) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy bài viết')
+    }
+    return blogs
+}
+
 const createBlog = async (body, file) => {
     const blog = await blogModel.findOne({title: body.title})
     const image = await uploadFileCloudinary(file)
@@ -74,5 +82,6 @@ module.exports = {
     getDetailBlog,
     createBlog,
     updateBlog,
-    deleteBlogById
+    deleteBlogById,
+    getPopularBlogs
 }

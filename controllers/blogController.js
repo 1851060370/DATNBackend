@@ -16,6 +16,11 @@ const getBlogDetail = catchAsync(async (req, res) => {
     res.status(200).send({success: true, data: blog})
 })
 
+const getPopularBlogs = catchAsync(async (req, res) => {
+    const blogs = await blogService.getPopularBlogs()
+    res.status(200).send({success: true, data: blogs})
+})
+
 const createBlog = catchAsync(async (req, res) => {
     const isError = await validateError(req, res)
     if (!isError) {
@@ -47,5 +52,6 @@ module.exports = {
     getBlogDetail,
     createBlog,
     updateBlog,
-    deleteBlog
+    deleteBlog,
+    getPopularBlogs
 }

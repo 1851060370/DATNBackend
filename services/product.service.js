@@ -22,6 +22,21 @@ const getProducts = async (page, limit, sort, restQuery) => {
     return {products, total}
 }
 
+const searchProducts = async keyword => {
+    const products = await productModel.find({name: {$regex: keyword, $options: 'i'}})
+    return {products}
+}
+
+const getByDisplay = async display => {
+    const products = await productModel.find({[display]: true}).limit(10)
+    return products
+}
+
+const getByCategory = async category => {
+    const products = await productModel.find({[display]: true}).limit(10)
+    return products
+}
+
 const getDetailProduct = async id => {
     const product = await productModel.findById(id)
     if (!product) {
@@ -82,5 +97,7 @@ module.exports = {
     getDetailProduct,
     createProduct,
     updateProduct,
-    deleteProductById
+    deleteProductById,
+    searchProducts,
+    getByDisplay
 }

@@ -10,6 +10,26 @@ const getProducts = catchAsync(async (req, res) => {
     res.status(200).send({success: true, data: products, page_index,page_size, total})
 })
 
+const searchProducts = catchAsync(async (req, res) => {
+    const {keyword} = req.query
+    if(keyword) {
+        const {products} = await productService.searchProducts(keyword)
+        res.status(200).send({success: true, data: products})
+    }else {
+        res.status(200).send({success: true, data: []})
+    }
+})
+
+const getByDisplay = catchAsync(async (req, res) => {
+    const {display} = req.query
+    if(display) {
+        const products = await productService.getByDisplay(display)
+        res.status(200).send({success: true, data: products})
+    }else {
+        res.status(200).send({success: true, data: []})
+    }
+})
+
 const getProductDetail = catchAsync(async (req, res) => {
     const {id} = req.params
     const product = await productService.getDetailProduct(id)
@@ -47,5 +67,7 @@ module.exports = {
     getProductDetail,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    searchProducts,
+    getByDisplay
 }

@@ -5,6 +5,7 @@ const categoryController = require('../controllers/categoryController')
 const categoryValidator = require('../validations/categoryValidator')
 
 router.get('/', verifyToken, categoryController.getCategories)
+router.get('/menu', verifyToken, categoryController.getMenus)
 router.get('/get-options/:id', verifyToken, categoryController.getOptionsCategories)
 router.get('/:id', verifyToken, categoryController.getCategoryDetail)
 router.post('/', verifyToken, categoryValidator.create(), categoryController.createCategory)

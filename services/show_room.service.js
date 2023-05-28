@@ -10,8 +10,6 @@ const getShowRooms = async (page, limit, sort, restQuery) => {
     delete restQuery?.name
     delete restQuery?.address
 
-    console.log(name);
-
     const showRooms = await showRoomModel
         .find({
             name: {$regex: name, $options: 'i'},
