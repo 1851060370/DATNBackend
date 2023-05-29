@@ -3,6 +3,8 @@ const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const uploadFileCloudinary = require('../utils/uploadFileCloudinary')
 const productModel = require('../models/product')
+const categoryModel = require('../models/category')
+const { default: mongoose } = require('mongoose')
 
 const getProducts = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
@@ -32,9 +34,34 @@ const getByDisplay = async display => {
     return products
 }
 
-const getByCategory = async category => {
-    const products = await productModel.find({[display]: true}).limit(10)
-    return products
+const getByCategory = async (category_id, page, limit, sort) => {
+    const sortArr = sort.split(' ')
+    const categories = [category_id]
+    const childrenCategories = await categoryModel.find({parent_id: category_id})
+    if (childrenCategories && childrenCategories.length > 0) {
+        childrenCategories.forEach(category => {
+            categories.push(category._id?.toString())
+        })
+        const childrenCategories2 = await Promise.all(
+            childrenCategories.map(i => {
+                return categoryModel.find({parent_id: i?._id})
+            })
+        )
+        childrenCategories2.flat().forEach(category => {
+            categories.push(category._id?.toString())
+        })
+    }
+
+    const categoriesObjectId = categories?.map(category => mongoose.Types.ObjectId(category))
+    const products = await productModel
+        .find({category: {$in: categoriesObjectId}})
+        .skip(limit * page - limit)
+        .limit(limit)
+        .sort({[sortArr[0]]: Number(sortArr[1])})
+
+    const total = await productModel.countDocuments({_id: {$in: categories}})
+
+    return {products, total}
 }
 
 const getDetailProduct = async id => {
@@ -99,5 +126,6 @@ module.exports = {
     updateProduct,
     deleteProductById,
     searchProducts,
-    getByDisplay
+    getByDisplay,
+    getByCategory
 }

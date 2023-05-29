@@ -6,27 +6,41 @@ const catchAsync = require('../utils/catchAsync')
 
 const getProducts = catchAsync(async (req, res) => {
     const {page_index, page_size, sort, ...restQuery} = req.query
-    const {products,total} = await productService.getProducts(page_index, page_size, sort, restQuery)
-    res.status(200).send({success: true, data: products, page_index,page_size, total})
+    const {products, total} = await productService.getProducts(
+        page_index,
+        page_size,
+        sort,
+        restQuery
+    )
+    res.status(200).send({success: true, data: products, page_index, page_size, total})
 })
 
 const searchProducts = catchAsync(async (req, res) => {
     const {keyword} = req.query
-    if(keyword) {
+    if (keyword) {
         const {products} = await productService.searchProducts(keyword)
         res.status(200).send({success: true, data: products})
-    }else {
+    } else {
         res.status(200).send({success: true, data: []})
     }
 })
 
 const getByDisplay = catchAsync(async (req, res) => {
     const {display} = req.query
-    if(display) {
+    if (display) {
         const products = await productService.getByDisplay(display)
         res.status(200).send({success: true, data: products})
-    }else {
+    } else {
         res.status(200).send({success: true, data: []})
+    }
+})
+
+const getByCategory = catchAsync(async (req, res) => {
+    const id = req.params.id
+    const {page_index, page_size, sort} = req.query
+    if (id) {
+        const {products, total} = await productService.getByCategory(id,page_index, page_size, sort)
+        res.status(200).send({success: true, data: products, page_index, page_size, total})
     }
 })
 
@@ -39,7 +53,7 @@ const getProductDetail = catchAsync(async (req, res) => {
 const createProduct = catchAsync(async (req, res) => {
     const isError = await validateError(req, res)
     if (!isError) {
-        const product = await productService.createProduct(req.body,req.files)
+        const product = await productService.createProduct(req.body, req.files)
         res.status(httpStatus.CREATED).send({success: true, data: product})
     }
 })
@@ -48,7 +62,7 @@ const updateProduct = catchAsync(async (req, res) => {
     const {id} = req.params
     const isError = await validateError(req, res)
     if (!isError) {
-        const product = await productService.updateProduct(id, req.body,req.files)
+        const product = await productService.updateProduct(id, req.body, req.files)
         res.status(200).send({success: true, data: product})
     }
 })
@@ -69,5 +83,6 @@ module.exports = {
     updateProduct,
     deleteProduct,
     searchProducts,
-    getByDisplay
+    getByDisplay,
+    getByCategory
 }
