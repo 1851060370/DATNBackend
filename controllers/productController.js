@@ -37,9 +37,16 @@ const getByDisplay = catchAsync(async (req, res) => {
 
 const getByCategory = catchAsync(async (req, res) => {
     const id = req.params.id
-    const {page_index, page_size, sort} = req.query
+    const {page_index, page_size, sort, stratPrice, endPrice} = req.query
     if (id) {
-        const {products, total} = await productService.getByCategory(id,page_index, page_size, sort)
+        const {products, total} = await productService.getByCategory(
+            id,
+            page_index,
+            page_size,
+            sort,
+            stratPrice,
+            endPrice
+        )
         res.status(200).send({success: true, data: products, page_index, page_size, total})
     }
 })

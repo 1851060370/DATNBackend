@@ -4,7 +4,7 @@ const ApiError = require('../utils/ApiError')
 const uploadFileCloudinary = require('../utils/uploadFileCloudinary')
 const productModel = require('../models/product')
 const categoryModel = require('../models/category')
-const { default: mongoose } = require('mongoose')
+const {default: mongoose} = require('mongoose')
 
 const getProducts = async (page, limit, sort, restQuery) => {
     const sortArr = sort.split(' ')
@@ -34,7 +34,7 @@ const getByDisplay = async display => {
     return products
 }
 
-const getByCategory = async (category_id, page, limit, sort) => {
+const getByCategory = async (category_id, page, limit, sort, stratPrice, endPrice) => {
     const sortArr = sort.split(' ')
     const categories = [category_id]
     const childrenCategories = await categoryModel.find({parent_id: category_id})
@@ -54,12 +54,15 @@ const getByCategory = async (category_id, page, limit, sort) => {
 
     const categoriesObjectId = categories?.map(category => mongoose.Types.ObjectId(category))
     const products = await productModel
-        .find({category: {$in: categoriesObjectId}})
+        .find({category: {$in: categoriesObjectId}, price: {$gte: stratPrice, $lt: endPrice}})
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
 
-    const total = await productModel.countDocuments({_id: {$in: categories}})
+    const total = await productModel.countDocuments({
+        category: {$in: categoriesObjectId},
+        price: {$gte: stratPrice, $lt: endPrice}
+    })
 
     return {products, total}
 }

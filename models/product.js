@@ -16,6 +16,10 @@ const ProductModel = mongoose.Schema(
         options: {
             type: Array
         },
+        price:{
+            type: Number,
+            required: true
+        },
         colors: {
             type: Array
         },
