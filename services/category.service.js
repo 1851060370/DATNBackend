@@ -28,6 +28,11 @@ const getOptionCategories = async id => {
     return await categoryModel.find({_id: {$ne: id}})
 }
 
+const getChildCategories = async id => {
+    const categories = await categoryModel.find({parent_id: id})
+    return categories
+}
+
 const getDetailCategory = async id => {
     const category = await categoryModel.findById(id)
     if (!category) {
@@ -99,5 +104,6 @@ module.exports = {
     updateCategory,
     deleteCategoryById,
     getOptionCategories,
-    getMenus
+    getMenus,
+    getChildCategories
 }

@@ -54,14 +54,17 @@ const getByCategory = async (category_id, page, limit, sort, stratPrice, endPric
 
     const categoriesObjectId = categories?.map(category => mongoose.Types.ObjectId(category))
     const products = await productModel
-        .find({category: {$in: categoriesObjectId}, price: {$gte: stratPrice, $lt: endPrice}})
+        .find({
+            category: {$in: categoriesObjectId},
+            ...(stratPrice && endPrice ? {price: {$gte: stratPrice, $lt: endPrice}} : {})
+        })
         .skip(limit * page - limit)
         .limit(limit)
         .sort({[sortArr[0]]: Number(sortArr[1])})
 
     const total = await productModel.countDocuments({
         category: {$in: categoriesObjectId},
-        price: {$gte: stratPrice, $lt: endPrice}
+        ...(stratPrice && endPrice ? {price: {$gte: stratPrice, $lt: endPrice}} : {})
     })
 
     return {products, total}

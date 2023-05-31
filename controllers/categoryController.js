@@ -20,6 +20,10 @@ const getMenus = catchAsync(async (req, res) => {
     res.status(200).send({success: true, data: categories})
 })
 
+const getChildCategories = catchAsync(async (req, res) => {
+    const categories = await categoryService.getChildCategories(req.params.id)
+    res.status(200).send({success: true, data: categories})
+})
 const getOptionsCategories = catchAsync(async (req, res) => {
     const {id} = req.params
     const categories = await categoryService.getOptionCategories(id)
@@ -65,5 +69,6 @@ module.exports = {
     updateCategory,
     deleteCategory,
     getOptionsCategories,
-    getMenus
+    getMenus,
+    getChildCategories
 }
