@@ -45,9 +45,21 @@ const deleteProductEvaluateById = async id => {
     return await productEvaluate.remove()
 }
 
+const changeStatusById = async id => {
+    const productEvaluate = await productEvaluateModel.findById(id)
+    if (!productEvaluate) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy đánh giá')
+    }
+    return await productEvaluateModel.updateOne(
+        {_id: id},
+        {display: productEvaluate.display === 0 ? 1 : 0}
+    )
+}
+
 module.exports = {
     getProductEvaluates,
     createProductEvaluate,
     deleteProductEvaluateById,
-    getDetailProductEvaluate
+    getDetailProductEvaluate,
+    changeStatusById
 }

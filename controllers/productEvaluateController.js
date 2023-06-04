@@ -18,7 +18,7 @@ const getProductEvaluates = catchAsync(async (req, res) => {
 const getProductEvaluateDetail = catchAsync(async (req, res) => {
     const {id} = req.params
     const productEvaluate = await productEvaluateService.getDetailProductEvaluate(id)
-    res.status(200).send({success: true, data:productEvaluate})
+    res.status(200).send({success: true, data: productEvaluate})
 })
 
 const createProductEvaluate = catchAsync(async (req, res) => {
@@ -38,9 +38,16 @@ const deleteProductEvaluate = catchAsync(async (req, res) => {
     }
 })
 
+const changeStatusById = catchAsync(async (req, res) => {
+    const {id} = req.params
+    await productEvaluateService.changeStatusById(id)
+    res.status(httpStatus.NO_CONTENT).send({success: true})
+})
+
 module.exports = {
     getProductEvaluates,
     getProductEvaluateDetail,
     createProductEvaluate,
-    deleteProductEvaluate
+    deleteProductEvaluate,
+    changeStatusById
 }

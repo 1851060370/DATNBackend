@@ -6,7 +6,7 @@ const contactValidator = require('../validations/contactValidator')
 
 router.get('/', verifyToken, contactController.getContacts)
 router.get('/:id', verifyToken, contactController.getContactDetail)
-router.post('/', verifyToken, contactValidator.create(), contactController.createContact)
+router.post('/', contactValidator.create(), contactController.createContact)
 router.delete('/:id', verifyToken, contactController.deleteContact)
 
 module.exports = router

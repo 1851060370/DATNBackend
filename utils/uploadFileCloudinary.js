@@ -14,8 +14,6 @@ const uploadFileCloudinary = async file => {
             for (let i = 0; i < file.length; i++) {
                 await cloudinary.uploader.upload(file[i].path, {public_id: file[i].filename})
                 const url = await cloudinary.url(file[i].filename, {
-                    width: 500,
-                    height: 500,
                     Crop: 'fill'
                 })
                 urls.push(url)
@@ -24,8 +22,6 @@ const uploadFileCloudinary = async file => {
         } else {
             await cloudinary.uploader.upload(file.path, {public_id: file.filename})
             const url = await cloudinary.url(file.filename, {
-                width: 500,
-                height: 500,
                 Crop: 'fill'
             })
 

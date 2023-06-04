@@ -34,9 +34,7 @@ const create = () => {
             .withMessage('Giới tính không hợp lệ'),
         body('method')
             .exists()
-            .withMessage('Phương thức thanh toán là bắt buộc')
-            .isIn(['tận nhà', 'cửa hàng'])
-            .withMessage('Phương thức thanh toán không hợp lệ'),
+            .withMessage('Phương thức thanh toán là bắt buộc'),
         body('products')
             .exists()
             .withMessage('Sản phẩm là bắt buộc')

@@ -20,10 +20,12 @@ const OrderModel = new mongoose.Schema(
             type: String,
             required: true
         },
+        other_requirements: {
+            type: String,
+        },
         method: {
             type: String,
             required: true,
-            enum: ['tận nhà', 'cửa hàng']
         },
         address: {
             type: String,

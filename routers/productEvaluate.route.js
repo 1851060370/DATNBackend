@@ -6,7 +6,8 @@ const productEvaluateValidator = require('../validations/productEvaluateValidato
 
 router.get('/', verifyToken, productEvaluateController.getProductEvaluates)
 router.get('/:id', verifyToken, productEvaluateController.getProductEvaluateDetail)
-router.post('/', verifyToken, productEvaluateValidator.create(), productEvaluateController.createProductEvaluate)
+router.post('/', productEvaluateValidator.create(), productEvaluateController.createProductEvaluate)
 router.delete('/:id', verifyToken, productEvaluateController.deleteProductEvaluate)
+router.put('/:id', verifyToken, productEvaluateController.changeStatusById)
 
 module.exports = router

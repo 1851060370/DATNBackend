@@ -3,6 +3,7 @@ const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const uploadFileCloudinary = require('../utils/uploadFileCloudinary')
 const productModel = require('../models/product')
+const productEvaluateModel = require('../models/product_evaluate')
 const categoryModel = require('../models/category')
 const {default: mongoose} = require('mongoose')
 
@@ -71,11 +72,21 @@ const getByCategory = async (category_id, page, limit, sort, stratPrice, endPric
 }
 
 const getDetailProduct = async id => {
+    let stars = 0
     const product = await productModel.findById(id)
+    const productEvaluate = await productEvaluateModel.find({productId: product?._id,display:1})
     if (!product) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy sản phẩm')
     }
-    return product
+
+    if (productEvaluate && productEvaluate.length > 0) {
+        const productStar = productEvaluate?.reduce((init, evaluate) => {
+            return init + evaluate?.stars
+        }, 0)
+
+        stars = productStar / productEvaluate.length
+    }
+    return {product, stars}
 }
 
 const createProduct = async (body, files) => {

@@ -53,8 +53,8 @@ const getByCategory = catchAsync(async (req, res) => {
 
 const getProductDetail = catchAsync(async (req, res) => {
     const {id} = req.params
-    const product = await productService.getDetailProduct(id)
-    res.status(200).send({success: true, data: product})
+    const {product,stars} = await productService.getDetailProduct(id)
+    res.status(200).send({success: true, data: product,stars})
 })
 
 const createProduct = catchAsync(async (req, res) => {
